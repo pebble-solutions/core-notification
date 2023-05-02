@@ -26,15 +26,25 @@ class SendNotificationsSummaryCommand extends Command
         $notificationsByService = [];
         foreach ($notifications as $notification) {
             $serviceName = $notification->getService()->getName();
+
+        // Regarde si elle n'existe pas déjà
             if (!isset($notificationsByService[$serviceName])) {
                 $notificationsByService[$serviceName] = [];
             }
+
+            // Ajouter si non existante
             $notificationsByService[$serviceName][] = $notification;
         }
 
+        // recup user
+
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+
+
         foreach ($users as $user) {
             $settings = $user->getSettingsNotification();
+
+            // Check si les utilisateurs on activer l'envois par mail
             if ($settings->getReceiveEmail() && $settings->isTodayEmail()) {
                 $message = (new \Swift_Message('Récapitulatif de vos notifications'))
                     ->setFrom('noreply@example.com')
