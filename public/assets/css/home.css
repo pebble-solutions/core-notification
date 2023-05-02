@@ -1,0 +1,14 @@
+.main_container{
+    margin-top: 70px;
+    margin-left: 200px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.main_container .item{
+    background: #fff;
+    margin-bottom: 10px;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 22px;
+}

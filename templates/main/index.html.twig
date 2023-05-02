@@ -1,20 +1,29 @@
 {% extends 'base.html.twig' %}
+{% block head %}
+    <head>
+        <title>Barre de navigation</title>
+        <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+        <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    </head>
+{% endblock %}
 
 {% block title %}Hello MainController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="main_container">
+        <div class="item">
+            <h1>Hello {{ controller_name }}! ✅</h1>
+        </div>
+        <div class="item">
+            <ul>
+                <li>Your controller at   <code><a href="{{ '/home/tanjiro/Documents/workspace_notification/notificationPebble/notification_pebble/src/Controller/MainController.php'|file_link(0) }}">src/Controller/MainController.php</a></code></li>
+                <li>Your template at   <code><a href="{{ '/home/tanjiro/Documents/workspace_notification/notificationPebble/notification_pebble/templates/main/index.html.twig'|file_link(0) }}">templates/main/index.html.twig</a></code></li>
+            </ul>
+        </div>
+        <div class="item">
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/tanjiro/Documents/workspace_notification/notificationPebble/notification_pebble/src/Controller/MainController.php'|file_link(0) }}">src/Controller/MainController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/tanjiro/Documents/workspace_notification/notificationPebble/notification_pebble/templates/main/index.html.twig'|file_link(0) }}">templates/main/index.html.twig</a></code></li>
-    </ul>
-</div>
+        </div>
+    </div>
+
 {% endblock %}
