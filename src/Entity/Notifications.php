@@ -35,6 +35,9 @@ class Notifications
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Notification')]
+    private ?Status $status_id = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +123,18 @@ class Notifications
     public function setUrl(?string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getStatusId(): ?Status
+    {
+        return $this->status_id;
+    }
+
+    public function setStatusId(?Status $status_id): self
+    {
+        $this->status_id = $status_id;
 
         return $this;
     }
