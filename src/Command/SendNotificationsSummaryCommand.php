@@ -9,8 +9,11 @@ use App\Entity\Notifications;
 use App\Entity\Users;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
-use Symfony\Component\Console\Input\InputOption;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 #[AsCommand(
     name: 'app:send-notifications-summary',
@@ -18,21 +21,29 @@ use Symfony\Component\Console\Input\InputOption;
 )]
 class SendNotificationsSummaryCommand extends Command
 {
-    use LockableTrait;
-
     protected static $defaultName = 'app:send-notifications-summary';
 
-    private EntityManagerInterface $entityManager;
+    use LockableTrait;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private EntityManagerInterface $entityManager;
+    private Environment $twig;
+
+    public function __construct(EntityManagerInterface $entityManager, Environment $twig)
     {
         $this->entityManager = $entityManager;
-
+        $this->twig = $twig;
         parent::__construct();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+
         if (!$this->lock('send-notifications-summary')) {
             $output->writeln('The command is already running in another process.');
 
@@ -60,26 +71,29 @@ class SendNotificationsSummaryCommand extends Command
 
         $users = $this->entityManager->getRepository(Users::class)->findAll();
 
-        foreach ($users as $user) {
-            $settings = $user->getSettingsNotification();
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                $settings = $user->getSettingsNotification();
 
-            // Check si les utilisateurs on activer l'envois par mail
-            if ($settings->getReceiveEmail() && $settings->isTodayEmail()) {
-                $message = (new \Swift_Message('Récapitulatif de vos notifications'))
-                    ->setFrom('noreply@example.com')
-                    ->setTo($user->getEmail())
-                    ->setBody(
-                        $content = $this->renderView(
-                            'mail/render.html.twig',
-                            ['notificationsByService' => $notificationsByService]
-
-                        ),
-                        'text/html'
+                // Check si les utilisateurs ont activé l'envoi par mail
+                if ($settings->getReceiveEmail() && $settings->isTodayEmail()) {
+                    $content = $this->twig->render(
+                        'mail/render.html.twig',
+                        ['notificationsByService' => $notificationsByService]
                     );
 
-                // Afficher le contenu HTML dans la sortie de la commande Symfony
-                $output->writeln($content);
+                    // Écrire le contenu HTML dans un fichier nommé "output.html"
+                    file_put_contents('output10.html', $content);
+                }
             }
+        } else {
+            $content = $this->twig->render(
+                'mail/render.html.twig',
+                ['notificationsByService' => $notificationsByService]
+            );
+
+            // Écrire le contenu HTML dans un fichier nommé "output5.html"
+            file_put_contents('output10.html', $content);
         }
 
         $this->release();

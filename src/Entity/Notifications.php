@@ -38,6 +38,9 @@ class Notifications
     #[ORM\ManyToOne(inversedBy: 'Notification')]
     private ?Status $status_id = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $timestamp = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Notifications
     public function setStatusId(?Status $status_id): self
     {
         $this->status_id = $status_id;
+
+        return $this;
+    }
+
+    public function getTimestamp(): ?\DateTimeInterface
+    {
+        return $this->timestamp;
+    }
+
+    public function setTimestamp(\DateTimeInterface $timestamp): self
+    {
+        $this->timestamp = $timestamp;
 
         return $this;
     }

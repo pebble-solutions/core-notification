@@ -1,0 +1,9 @@
+<h1> test </h1>
+{% for serviceName, notifications in notificationsByService %}
+    <h3>{{ serviceName }}</h3>
+    <ul>
+        {% for notification in notifications %}
+            <li>{{ notification.message }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
