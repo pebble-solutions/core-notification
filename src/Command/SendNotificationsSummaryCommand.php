@@ -2,13 +2,15 @@
 
 namespace App\Command;
 
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use App\Entity\Notifications;
+use App\Entity\Users;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
+use Symfony\Component\Console\Input\InputOption;
+
 
 #[AsCommand(
     name: 'app:send-notifications-summary',
@@ -16,18 +18,36 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class SendNotificationsSummaryCommand extends Command
 {
+    use LockableTrait;
+
+    protected static $defaultName = 'app:send-notifications-summary';
+
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+
+        parent::__construct();
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$this->lock('send-notifications-summary')) {
+            $output->writeln('The command is already running in another process.');
+
+            return 0;
+        }
+
         // Récupération des notifications depuis la base de données
-        $notifications = $this->getDoctrine()->getRepository(Notification::class)->findForToday();
+        $notifications = $this->entityManager->getRepository(Notifications::class)->findForToday();
 
         // Tri des notifications par service
         $notificationsByService = [];
         foreach ($notifications as $notification) {
             $serviceName = $notification->getService()->getName();
 
-        // Regarde si elle n'existe pas déjà
+            // Regarde si elle n'existe pas déjà
             if (!isset($notificationsByService[$serviceName])) {
                 $notificationsByService[$serviceName] = [];
             }
@@ -38,8 +58,7 @@ class SendNotificationsSummaryCommand extends Command
 
         // recup user
 
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
-
+        $users = $this->entityManager->getRepository(Users::class)->findAll();
 
         foreach ($users as $user) {
             $settings = $user->getSettingsNotification();
@@ -50,15 +69,21 @@ class SendNotificationsSummaryCommand extends Command
                     ->setFrom('noreply@example.com')
                     ->setTo($user->getEmail())
                     ->setBody(
-                        $this->renderView(
-                            'emails/notification_summary.html.twig',
+                        $content = $this->renderView(
+                            'mail/render.html.twig',
                             ['notificationsByService' => $notificationsByService]
+
                         ),
                         'text/html'
                     );
-                $this->get('mailer')->send($message);
+
+                // Afficher le contenu HTML dans la sortie de la commande Symfony
+                $output->writeln($content);
             }
         }
+
+        $this->release();
+
         return Command::SUCCESS;
     }
 }

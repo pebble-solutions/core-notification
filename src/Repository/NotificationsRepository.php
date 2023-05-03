@@ -39,6 +39,22 @@ class NotificationsRepository extends ServiceEntityRepository
         }
     }
 
+
+    // Function pour avoir les données le jour même
+    public function findForToday(): array
+    {
+        $today = new \DateTime();
+        $today->setTime(15, 0, 0);
+
+        $qb = $this->createQueryBuilder('n')
+            ->where('n.timestamp >= :today')
+            ->setParameter('today', $today)
+            ->orderBy('n.timestamp', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+
 //    /**
 //     * @return Notifications[] Returns an array of Notifications objects
 //     */
