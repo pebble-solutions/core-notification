@@ -1,0 +1,223 @@
+body {
+    background-color: #121212;
+}
+
+main {
+    margin: 0px;
+}
+
+
+hr {
+    width: 75%;
+    margin-top: 60px;
+}
+
+
+/* NOTIF ZONE */
+
+
+/* container Notif */ 
+
+.wrapper {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
+}
+
+
+/* Modif le text */ 
+
+.textP {
+    margin-left: 5%;
+    color: white;
+}
+
+
+
+/* Picture Service x BTN */
+
+.btn-ref {
+    width: 80px;
+}
+
+
+.imgServ {
+    height: 60px;
+}
+
+
+
+/* Picture profile */
+
+.picture {
+    height: 100%;
+}
+
+.imgProfile {
+    height: 90px;
+    border-radius: 60%;
+}
+
+
+
+/*   NO REPEAT    */
+
+.display {
+    display: flex;
+}
+
+.display-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.display-right {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+}
+
+.display-colPC {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+
+/* COL x MARG x PADD */ 
+
+
+/* marging TOP */
+
+.margT10 {
+    margin-top: 10px;
+}
+
+.margT25 {
+    margin-top: 25px;
+}
+
+.margT50 {
+    margin-top: 50px;
+}
+     
+
+/* MARGING LEFT */
+
+.margL10 {
+    margin-left: 10px;
+}
+
+.margL25 {
+    margin-left: 25px;
+}
+
+.margL50 {
+    margin-left: 50px;
+}
+
+
+/* Marging RIGHT */
+
+.margR10 {
+    margin-right: 10px;
+}
+
+.margR25 {
+    margin-right: 20px;
+}
+
+.margR50 {
+    margin-right: 50px;
+}
+
+/* padding right */
+
+.padR10 {
+    padding-right: 10px;
+
+}
+
+.padR25 {
+    padding-right: 25px;
+
+}
+
+.padR50 {
+    padding-right: 50px;
+
+}
+
+/* PC */
+@media only screen and (min-width: 1200px) {
+    
+    .displayPC {
+        display: flex;
+    }
+    
+    .display-centerPC {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+    }
+    
+    .display-colPC {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+
+    .container {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        width: 80%;
+        color: white;
+    }
+
+    /* btn */
+    .container-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .style-btn {
+        width: 140px;
+        height: 70px;
+        border-radius: 200px;
+    }
+
+
+    /* Ajust height x widht */
+    
+    .col-pc100 {
+        width: 100%;
+    }
+    
+    .col-pc50 {
+        width: 50%;
+    }
+
+
+    /* IMG x logo x Text */
+
+    .belt {
+        height: 150px;
+        width: 150px;
+    }
+  
+}
+  
