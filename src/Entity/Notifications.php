@@ -15,24 +15,31 @@ class Notifications
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("getNotification")]
     private ?int $user_id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("getNotification")]
     private ?int $services_id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getNotification")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getNotification")]
     private ?string $message = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("getNotification")]
     private ?\DateTimeInterface $timestamp = null;
 
     #[ORM\Column]
+    #[Groups("getNotification")]
     private ?int $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getNotification")]
     private ?string $url = null;
 
     public function getId(): ?int

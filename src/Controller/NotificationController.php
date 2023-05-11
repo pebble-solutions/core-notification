@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Notifications;
 use App\Repository\NotificationsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class NotificationController extends AbstractController
@@ -23,6 +26,24 @@ class NotificationController extends AbstractController
         $jsonNotificationList = $serializer->serialize($notificationList, 'json');
 
         return new JsonResponse($jsonNotificationList, Response::HTTP_OK, [], true);
+    }
+
+
+    // Nouvelle notif
+    #[Route('/api/notifications', name:"createNotification", methods: ['POST'])]
+    public function createNotification(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
+    {
+
+        $notif = $serializer->deserialize($request->getContent(), Notifications::class, 'json');
+        $em->persist($notif);
+        $em->flush();
+
+        $jsonNotif = $serializer->serialize($notif, 'json', ['Groups' => 'getNotification']);
+
+
+        $location = $urlGenerator->generate('detailNotification', ['id' => $notif->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse($jsonNotif, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
 
@@ -46,6 +67,16 @@ class NotificationController extends AbstractController
         return new JsonResponse($jsonNotifications, Response::HTTP_OK, ['Content-Type' => 'application/json'], true);
     }
 
+
+    // Supprimer une notification
+    #[Route('/api/notifications/del/{id}', name: 'deleteNotification', methods: ['DELETE'])]
+    public function deleteNotification(Notifications $notifications, EntityManagerInterface $em): JsonResponse
+    {
+        $em->remove($notifications);
+        $em->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
 
 }
 
