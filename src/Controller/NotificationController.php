@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Notifications;
 use App\Repository\NotificationsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,4 +21,12 @@ class NotificationController extends AbstractController
 
         return new JsonResponse($jsonNotificationList, Response::HTTP_OK, [], true);
     }
+
+    #[Route('/api/notifications/{id}', name: 'detailNotification', methods: ['GET'])]
+    public function getDetailBook(Notifications $notifications , SerializerInterface $serializer): JsonResponse
+    {
+        $jsonNotification = $serializer->serialize($notifications, 'json');
+        return new JsonResponse($jsonNotification, Response::HTTP_OK, ['accept' => 'json'], true);
+    }
 }
+
