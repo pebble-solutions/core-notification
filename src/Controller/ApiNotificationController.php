@@ -41,7 +41,6 @@ class ApiNotificationController extends AbstractController
 
         $jsonNotif = $serializer->serialize($notif, 'json', ['Groups' => 'getNotification']);
 
-
         $location = $urlGenerator->generate('detailNotification', ['id' => $notif->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new JsonResponse($jsonNotif, Response::HTTP_CREATED, ["Location" => $location], true);

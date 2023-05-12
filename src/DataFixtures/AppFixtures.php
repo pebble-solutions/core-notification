@@ -14,7 +14,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Création d'une vingtaine de livres ayant pour titre
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $notifications = new Notifications();
             $notifications->setuserId(rand(1, 10));
             $notifications->setServicesId(rand(1, 10));
