@@ -30,6 +30,7 @@ class SendNotificationsSummaryCommand extends Command
 
     public function __construct(EntityManagerInterface $entityManager, Environment $twig)
     {
+
         $this->entityManager = $entityManager;
         $this->twig = $twig;
         parent::__construct();
@@ -45,7 +46,7 @@ class SendNotificationsSummaryCommand extends Command
     {
 
         if (!$this->lock('send-notifications-summary')) {
-            $output->writeln('The command is already running in another process.');
+            $output->writeln('The command is already running in aoutput10nother process.');
 
             return 0;
         }
@@ -93,7 +94,7 @@ class SendNotificationsSummaryCommand extends Command
             );
 
             // Écrire le contenu HTML dans un fichier nommé "output5.html"
-            file_put_contents('output10.html', $content);
+            file_put_contents('output5.html', $content);
         }
 
         $this->release();

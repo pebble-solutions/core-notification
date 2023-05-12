@@ -18,26 +18,39 @@
 
 
     {% block body %}
+         {% for service_id, notifications in notificationsByService %}
+            <div class="service-container">
+            <h2>{{ service }}</h2>
+
+
         <div class="main">
             <div class="displayPC">
             <div>
+                {% for notification in notifications %}
                 <div class="container">
                     <div class="wrapper display-center display-centerPC margT50">
                         <div class="picture"> <img class="imgProfile margL25" src="images/killian.jpeg" alt="Photo de profil"> </div>
                             <div class="display-colPC">
                                 <div class="textP">
+                                    <h3>{{ notification.title }}</h3>
                                 <p>
-
-
+                                    {{notification.message }}
                                 </p>
-                            </div>    
+                                    {% if notification.url %}
+                                        <a href="{{ notification.url }}"></a>
+                                    {% endif %}
+                            </div>
+                                {% endfor %}
                                     <div class="display-right">
                                         <img class="imgServ padR50" src="" alt="">
                                         <button class="btn-ref margR50">test</button>         
                                     </div>
                             </div>
+                                {% endfor %}
                     </div>
                 </div>
+
+                {% endblock %}
 
 
 

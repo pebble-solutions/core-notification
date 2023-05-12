@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class NotificationController extends AbstractController
+class ApiNotificationController extends AbstractController
 {
 
 
@@ -47,6 +48,29 @@ class NotificationController extends AbstractController
     }
 
 
+    // Modifier une notifications
+    #[Route('/api/notifications/{id}', name:"updateBook", methods:['PUT'])]
+
+    public function updateNotification(Request $request, SerializerInterface $serializer, Notifications $currentNotif, EntityManagerInterface $em ): JsonResponse
+    {
+        $updatedNotif = $serializer->deserialize($request->getContent(), Notifications::class,'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentNotif]);
+
+        $em->persist($updatedNotif);
+        $em->flush();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    // Supprimer une notification
+    #[Route('/api/notifications/{id}', name: 'deleteNotification', methods: ['DELETE'])]
+    public function deleteNotification(Notifications $notifications, EntityManagerInterface $em): JsonResponse
+    {
+        $em->remove($notifications);
+        $em->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+
     // Recup des notifs par ID
     #[Route('/api/notifications/{id}', name: 'detailNotification', methods: ['GET'])]
     public function getDetailNotification(Notifications $notifications , SerializerInterface $serializer): JsonResponse
@@ -68,15 +92,6 @@ class NotificationController extends AbstractController
     }
 
 
-    // Supprimer une notification
-    #[Route('/api/notifications/del/{id}', name: 'deleteNotification', methods: ['DELETE'])]
-    public function deleteNotification(Notifications $notifications, EntityManagerInterface $em): JsonResponse
-    {
-        $em->remove($notifications);
-        $em->flush();
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-    }
 
 }
 
