@@ -75,7 +75,7 @@ class ApiNotificationController extends AbstractController
     public function getDetailNotification(Notifications $notifications , SerializerInterface $serializer): JsonResponse
     {
         $jsonNotification = $serializer->serialize($notifications, 'json');
-        return new JsonResponse($jsonNotification, Response::HTTP_OK, ['accept' => 'json'], true);
+        return new JsonResponse($jsonNotification, json:true);
     }
 
 
