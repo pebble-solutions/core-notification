@@ -29,7 +29,7 @@ class ApiNotificationController extends AbstractController
         return new JsonResponse($jsonNotificationList, Response::HTTP_OK, [], true);
     }
 
-
+// test
     // Nouvelle notif
     #[Route('/api/notifications', name:"createNotification", methods: ['POST'])]
     public function createNotification(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
