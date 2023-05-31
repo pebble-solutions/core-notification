@@ -23,9 +23,9 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications', name: 'notification', methods: ['GET'])]
     public function getNotificationList(NotificationsRepository $notificationsRepository, SerializerInterface $serializer): JsonResponse
     {
+        // AUTH TOKKEN
         $authenticator= new ApiAuthenticator();
         $token = $authenticator->AuthToken();
-
 
         $notificationList = $notificationsRepository->findAll();
         $jsonNotificationList = $serializer->serialize($notificationList, 'json');
@@ -37,6 +37,9 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications', name:"createNotification", methods: ['POST'])]
     public function createNotification(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
+
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
 
         $notif = $serializer->deserialize($request->getContent(), Notifications::class, 'json');
         $em->persist($notif);
@@ -55,6 +58,10 @@ class ApiNotificationController extends AbstractController
 
     public function updateNotification(Request $request, SerializerInterface $serializer, Notifications $currentNotif, EntityManagerInterface $em ): JsonResponse
     {
+
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
+
         $updatedNotif = $serializer->deserialize($request->getContent(), Notifications::class,'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentNotif]);
 
         $em->persist($updatedNotif);
@@ -66,6 +73,10 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications/{id}', name: 'deleteNotification', methods: ['DELETE'])]
     public function deleteNotification(Notifications $notifications, EntityManagerInterface $em): JsonResponse
     {
+
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
+
         $em->remove($notifications);
         $em->flush();
 
@@ -77,6 +88,9 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications/{id}', name: 'detailNotification', methods: ['GET'])]
     public function getDetailNotification(Notifications $notifications , SerializerInterface $serializer): JsonResponse
     {
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
+
         $jsonNotification = $serializer->serialize($notifications, 'json');
         return new JsonResponse($jsonNotification, json:true);
     }
@@ -87,6 +101,9 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications/user/{userId}', name: 'notificationsByUser', methods: ['GET'])]
     public function getNotificationsByUser($userId, NotificationsRepository $notificationsRepository, SerializerInterface $serializer): JsonResponse
     {
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
+
         $notifications = $notificationsRepository->findBy(['user_id' => $userId]);
         $jsonNotifications = $serializer->serialize($notifications, 'json');
 

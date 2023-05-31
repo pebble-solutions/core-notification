@@ -7,11 +7,10 @@ use Throwable;
 
 class ApiAuthenticator
 {
-    public function AuthToken()
+    public function AuthToken(): PasToken
     {
         $token = new PasToken();
         try {
-            //$token->getTokenFromAuthorizationHeader()->decode();
             $token->getTokenFromAuthorizationHeader()->decode();
             return $token;
         } catch (Throwable $e) {
