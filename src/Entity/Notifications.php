@@ -42,6 +42,9 @@ class Notifications
     #[Groups("getNotification")]
     private ?string $url = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $app = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,6 +130,18 @@ class Notifications
     public function setUrl(?string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getApp(): ?int
+    {
+        return $this->app;
+    }
+
+    public function setApp(?int $app): self
+    {
+        $this->app = $app;
 
         return $this;
     }
