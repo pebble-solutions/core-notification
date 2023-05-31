@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\class\ApiAuthenticator;
 use App\Entity\Notifications;
 use App\Repository\NotificationsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,9 @@ class ApiNotificationController extends AbstractController
     #[Route('/api/notifications', name: 'notification', methods: ['GET'])]
     public function getNotificationList(NotificationsRepository $notificationsRepository, SerializerInterface $serializer): JsonResponse
     {
+        $authenticator= new ApiAuthenticator();
+        $token = $authenticator->AuthToken();
+
 
         $notificationList = $notificationsRepository->findAll();
         $jsonNotificationList = $serializer->serialize($notificationList, 'json');

@@ -6,6 +6,7 @@
     "require": {
         "php": ">=8.0",
         "ext-ctype": "*",
+        "pebble/pas-token-client": "dev-main",
         "ext-iconv": "*",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.9",

@@ -2,18 +2,20 @@
 
 namespace App\class;
 
+use Pebble\Security\PAS\PasToken;
 use Throwable;
 
 class ApiAuthenticator
 {
-    public function authenticate($credentials)
+    public function AuthToken()
     {
-        $token = new PasToken(); // Assurez-vous que la classe PasToken existe et est correctement importée
-
+        $token = new PasToken();
         try {
+            //$token->getTokenFromAuthorizationHeader()->decode();
             $token->getTokenFromAuthorizationHeader()->decode();
-        } catch (Throwable $exception) {
-            // Gérez l'exception d'une manière appropriée, par exemple en enregistrant un message d'erreur ou en renvoyant une réponse d'erreur
+            return $token;
+        } catch (Throwable $e) {
+            throw new \InvalidArgumentException('Error : ' . $e->getMessage());
         }
     }
 }
