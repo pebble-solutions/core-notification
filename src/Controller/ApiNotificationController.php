@@ -14,103 +14,91 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Entity\Services;
+
 
 class ApiNotificationController extends AbstractController
 {
+    private $serializer;
+    private $entityManager;
+    private $urlGenerator;
 
-
-    // Recup de toutes les données
-    #[Route('/api/notifications', name: 'notification', methods: ['GET'])]
-    public function getNotificationList(NotificationsRepository $notificationsRepository, SerializerInterface $serializer): JsonResponse
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator)
     {
-        // AUTH TOKKEN
-        $authenticator= new ApiAuthenticator();
-        $token = $authenticator->AuthToken();
+        $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
+        $this->urlGenerator = $urlGenerator;
+    }
 
-        $notificationList = $notificationsRepository->findAll();
-        $jsonNotificationList = $serializer->serialize($notificationList, 'json');
+    // Récupérer toutes les notifications
+    #[Route('/api/notifications', name: 'notification', methods: ['GET'])]
+    public function getNotificationList(NotificationsRepository $notificationsRepository): JsonResponse
+    {
+
+        // AUTH TOKKEN
+        //$authenticator= new ApiAuthenticator();
+        //$token = $authenticator->AuthToken();
+
+        //$notificationList = $notificationsRepository->findAll();
+        //$jsonNotificationList = $this->serializer->serialize($notificationList, 'json');
 
         return new JsonResponse($jsonNotificationList, Response::HTTP_OK, [], true);
     }
-    
-    // Nouvelle notif
-    #[Route('/api/notifications', name:"createNotification", methods: ['POST'])]
-    public function createNotification(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
+
+    // Créer une nouvelle notification
+    #[Route('/api/notifications', name: "createNotification", methods: ['POST'])]
+    public function createNotification(Request $request): JsonResponse
     {
+        $jsonData = $request->getContent();
+        $notification = $this->serializer->deserialize($jsonData, Notifications::class, 'json');
 
-         //$authenticator= new ApiAuthenticator();
-         //$token = $authenticator->AuthToken();
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
 
-        $notif = $serializer->deserialize($request->getContent(), Notifications::class, 'json');
-        $em->persist($notif);
-        $em->flush();
+        $jsonNotification = $this->serializer->serialize($notification, 'json');
+        $location = $this->urlGenerator->generate('detailNotification', ['id' => $notification->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $jsonNotif = $serializer->serialize($notif, 'json', ['Groups' => 'getNotification']);
-
-        $location = $urlGenerator->generate('detailNotification', ['id' => $notif->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return new JsonResponse($jsonNotif, Response::HTTP_CREATED, ["Location" => $location], true);
+        return new JsonResponse($jsonNotification, Response::HTTP_CREATED, ['Location' => $location], true);
     }
 
-
-    // Modifier une notifications
-    #[Route('/api/notifications/{id}', name:"updateBook", methods:['PUT'])]
-
-    public function updateNotification(Request $request, SerializerInterface $serializer, Notifications $currentNotif, EntityManagerInterface $em ): JsonResponse
+    // Mettre à jour une notification
+    #[Route('/api/notifications/{id}', name: "updateNotification", methods: ['PUT'])]
+    public function updateNotification(Request $request, Notifications $notification): JsonResponse
     {
+        $jsonData = $request->getContent();
+        $updatedNotification = $this->serializer->deserialize($jsonData, Notifications::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $notification]);
 
-        // $authenticator= new ApiAuthenticator();
-        // $token = $authenticator->AuthToken();
+        $this->entityManager->flush();
 
-        $updatedNotif = $serializer->deserialize($request->getContent(), Notifications::class,'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentNotif]);
-
-        $em->persist($updatedNotif);
-        $em->flush();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     // Supprimer une notification
     #[Route('/api/notifications/{id}', name: 'deleteNotification', methods: ['DELETE'])]
-    public function deleteNotification(Notifications $notifications, EntityManagerInterface $em): JsonResponse
+    public function deleteNotification(Notifications $notification): JsonResponse
     {
-
-       // $authenticator= new ApiAuthenticator();
-        // $token = $authenticator->AuthToken();
-
-        $em->remove($notifications);
-        $em->flush();
+        $this->entityManager->remove($notification);
+        $this->entityManager->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-
-    // Recup des notifs par ID
+    // Récupérer le détail d'une notification par ID
     #[Route('/api/notifications/{id}', name: 'detailNotification', methods: ['GET'])]
-    public function getDetailNotification(Notifications $notifications , SerializerInterface $serializer): JsonResponse
+    public function getDetailNotification(Notifications $notification): JsonResponse
     {
-        // $authenticator= new ApiAuthenticator();
-        // $token = $authenticator->AuthToken();
+        $jsonNotification = $this->serializer->serialize($notification, 'json');
 
-        $jsonNotification = $serializer->serialize($notifications, 'json');
-        return new JsonResponse($jsonNotification, json:true);
+        return new JsonResponse($jsonNotification, Response::HTTP_OK, [], true);
     }
 
-
-
-    // Recup des notif par User_ID
+    // Récupérer les notifications d'un utilisateur par User_ID
     #[Route('/api/notifications/user/{userId}', name: 'notificationsByUser', methods: ['GET'])]
-    public function getNotificationsByUser($userId, NotificationsRepository $notificationsRepository, SerializerInterface $serializer): JsonResponse
+    public function getNotificationsByUser($userId, NotificationsRepository $notificationsRepository): JsonResponse
     {
-       // $authenticator= new ApiAuthenticator();
-        // $token = $authenticator->AuthToken();
-
         $notifications = $notificationsRepository->findBy(['user_id' => $userId]);
-        $jsonNotifications = $serializer->serialize($notifications, 'json');
+        $jsonNotifications = $this->serializer->serialize($notifications, 'json');
 
         return new JsonResponse($jsonNotifications, Response::HTTP_OK, ['Content-Type' => 'application/json'], true);
     }
-
-
-
 }
-
